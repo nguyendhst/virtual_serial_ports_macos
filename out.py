@@ -1,5 +1,6 @@
 import serial
 import sys
+import os
 
 def startSerial(tty_id):
     ser = serial.Serial(port = tty_id, timeout = None)
@@ -12,11 +13,11 @@ def startSerial(tty_id):
         print(ser.name, ":connection failed.")
         return False
 
-def decodeSerial(ser):
-    i = ser.read_until(b"1")
-    return i
 
-ser = startSerial("/dev/ttys009")
+# read from argument
+tty_id = os.sys.argv[1]
+
+ser = startSerial("/dev/"+tty_id)
 
 sys.stdout.write(str(ser.read_until(b"\n"), encoding="utf-8"))
 sys.stdout.flush()
