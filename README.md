@@ -1,5 +1,13 @@
 <h2 align="center">Simple Adafruit IO IoT Gateway w/ Virtual Serial Port</h2>
 
+### Create a `conf.ini` file
+```ini
+[DEFAULT]
+Username = <adaio username>
+Key = <adaio key>
+Feeds = sensor1,sensor2
+```
+
 ### For MacOS Users
 ```bash
 brew install socat
