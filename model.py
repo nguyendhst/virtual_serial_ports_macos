@@ -2,6 +2,8 @@
 import serial
 import logging
 
+from influxdb_client import InfluxDBClient, Point, WritePrecision
+
 
 class Model:
     pass
@@ -63,3 +65,13 @@ class Topic:
 
     def getData(self):
         return self.data
+
+
+class InfluxDataPoint:
+    #      "point1": {
+    #     "sensor": "sensor1",
+    #     "id": "111",
+    #     "value": 23,
+    #   },
+    def __init__(self, raw):
+        pass

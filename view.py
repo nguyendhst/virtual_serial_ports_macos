@@ -30,11 +30,9 @@ if __name__ == "__main__":
     controller = Controller("virtual")
 
     # wait for ctrl-c
-    try:
-        while True:
-            data = controller.readSerial()
-            if data:
-                controller.processData(data)
-            time.sleep(0.1)
-    except KeyboardInterrupt:
-        pass
+    while True:
+        data = controller.readSerial()
+        if data:
+            print("data: ", data)
+            controller.processData(data)
+        time.sleep(0.1)
