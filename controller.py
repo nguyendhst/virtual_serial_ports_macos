@@ -17,10 +17,10 @@ from model import *
 
 
 class AdafruitIO:
-    def __init__(self, username, key) -> None:
-        self.username = username
-        self.key = key
+    def __init__(self) -> None:
         self.client = None
+        self.username = None
+        self.key = None
         self.feeds = None
         self.setProfile()
 
@@ -155,85 +155,89 @@ class InfluxDB:
         )
 
 
-class Profile:
-    def __init__(self) -> None:
-        self.client = None
-        self.username = None
-        self.key = None
-        self.feeds = None
-        self.setProfile()
+# class Profile:
+#     def __init__(self) -> None:
+#         self.client = None
+#         self.username = None
+#         self.key = None
+#         self.feeds = None
+#         self.setProfile()
 
-    def setProfile(self):
-        # read config file
-        try:
-            conf = configparser.ConfigParser()
-            conf.read("conf.ini")
-            print("Config file found")
+#     def setProfile(self):
+#         # read config file
+#         try:
+#             conf = configparser.ConfigParser()
+#             conf.read("conf.ini")
+#             print("Config file found")
 
-            self.username = conf["DEFAULT"]["Username"]
-            self.key = conf["DEFAULT"]["Key"]
-            self.feeds = conf["DEFAULT"]["Feeds"].split(",")
-            print("Username: ", str(self.username))
-            print("Key: ", str(self.key))
-            print("Feeds: ", str(self.feeds))
-        except:
-            raise Exception("Problem reading config file")
+#             self.username = conf["DEFAULT"]["Username"]
+#             self.key = conf["DEFAULT"]["Key"]
+#             self.feeds = conf["DEFAULT"]["Feeds"].split(",")
+#             print("Username: ", str(self.username))
+#             print("Key: ", str(self.key))
+#             print("Feeds: ", str(self.feeds))
+#         except:
+#             raise Exception("Problem reading config file")
 
-    def connected(self, client):
-        print("Connected to server")
-        print("Subscribing to feed: ", self.feeds)
-        for topic in self.feeds:
-            self.subscribe(topic)
+#     def connected(self, client):
+#         print("Connected to server")
+#         print("Subscribing to feed: ", self.feeds)
+#         for topic in self.feeds:
+#             self.subscribe(topic)
 
-    def subscribed(self, client, userdata, mid, granted_qos):
-        print("Subscribe success")
+#     def subscribed(self, client, userdata, mid, granted_qos):
+#         print("Subscribe success")
 
-    def disconnected(self, client):
-        print("Disconnected from server")
-        sys.exit(1)
+#     def disconnected(self, client):
+#         print("Disconnected from server")
+#         sys.exit(1)
 
-    def message(self, feed_id, payload):
-        print("Received message: " + payload + ", feed_id: " + feed_id)
+#     def message(self, feed_id, payload):
+#         print("Received message: " + payload + ", feed_id: " + feed_id)
 
-    def connect(self):
-        self.client = MQTTClient(self.username, self.key)
-        self.client.on_connect = lambda client: self.connected(client)
+#     def connect(self):
+#         self.client = MQTTClient(self.username, self.key)
+#         self.client.on_connect = lambda client: self.connected(client)
 
-        self.client.on_subscribe = (
-            lambda client, userdata, mid, granted_qos: self.subscribed(
-                client, userdata, mid, granted_qos
-            )
-        )
-        self.client.on_disconnect = lambda client: self.disconnected(client)
+#         self.client.on_subscribe = (
+#             lambda client, userdata, mid, granted_qos: self.subscribed(
+#                 client, userdata, mid, granted_qos
+#             )
+#         )
+#         self.client.on_disconnect = lambda client: self.disconnected(client)
 
-        self.client.on_message = lambda feed_id, payload: self.message(feed_id, payload)
+#         self.client.on_message = lambda feed_id, payload: self.message(feed_id, payload)
 
-        try:
-            self.client.connect()
-            self.client.loop_background()
-        except:
-            raise Exception("Connect to Adafruit IO failed")
+#         try:
+#             self.client.connect()
+#             self.client.loop_background()
+#         except:
+#             raise Exception("Connect to Adafruit IO failed")
 
-    def publish(self, feed_id, data):
-        self.client.publish(feed_id, data)
+#     def publish(self, feed_id, data):
+#         self.client.publish(feed_id, data)
 
-    def subscribe(self, feed_id):
-        self.client.subscribe(feed_id)
+#     def subscribe(self, feed_id):
+#         self.client.subscribe(feed_id)
 
-    def disconnect(self):
-        self.client.disconnect()
+#     def disconnect(self):
+#         self.client.disconnect()
 
-    def loop(self):
-        self.client.loop()
+#     def loop(self):
+#         self.client.loop()
 
 
 class Controller:
     def __init__(self, mode) -> None:
-        self.profile = InfluxDB()
+        # change data profile here
+        self.profile = AdafruitIO()
+        # self.profile = InfluxDB()
+
         self.profile.connect()
         if mode == "virtual":
             self.serial = VirtualSerial("/dev/ttys012")
         else:
+            # TODO
             self.serial = Serial("/dev/ttyUSB0")
 
     def writeData(self, data):
